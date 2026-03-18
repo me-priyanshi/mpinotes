@@ -1511,7 +1511,7 @@ const contentData = [
           </div>
         </section>
 
-        <section>
+        <section className="mb-10">
           <h2 className="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-100 border-b pb-2 border-slate-200 dark:border-slate-700">
             Memory Segmentation
           </h2>
@@ -1525,10 +1525,79 @@ const contentData = [
             physical memory) but internal registers are only 16-bit (max 64 KB).
             <br />
             <strong>Solution:</strong> Divide 1 MB memory into logical chunks
-            called <strong>Segments</strong> of 64 KB each.
+            called <strong>Segments</strong> of 64 KB each. The processor uses a
+            combination of two 16-bit registers to pinpoint one exact 20-bit
+            physical address.
           </p>
 
-          <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg font-mono text-center mb-4 border border-slate-300 dark:border-slate-600">
+          <h3 className="text-xl font-semibold mb-3 mt-6 text-slate-800 dark:text-slate-200">
+            Segment Registers & Default Offsets
+          </h3>
+          <div className="overflow-x-auto mb-6 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
+            <table className="w-full text-left text-sm border-collapse text-slate-700 dark:text-slate-300">
+              <thead className="bg-slate-100 dark:bg-slate-800">
+                <tr>
+                  <th className="p-3 border-b border-slate-200 dark:border-slate-700 font-bold">
+                    Segment Name
+                  </th>
+                  <th className="p-3 border-b border-slate-200 dark:border-slate-700 font-bold">
+                    Register
+                  </th>
+                  <th className="p-3 border-b border-slate-200 dark:border-slate-700 font-bold">
+                    Default Offset(s)
+                  </th>
+                  <th className="p-3 border-b border-slate-200 dark:border-slate-700 font-bold">
+                    Main Purpose
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 bg-white dark:bg-slate-900">
+                <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                  <td className="p-3 font-medium">Code</td>
+                  <td className="p-3 font-bold text-indigo-600 dark:text-indigo-400">
+                    CS
+                  </td>
+                  <td className="p-3 font-mono text-xs">IP</td>
+                  <td className="p-3">
+                    Stores the actual executable instructions of your program.
+                  </td>
+                </tr>
+                <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                  <td className="p-3 font-medium">Data</td>
+                  <td className="p-3 font-bold text-indigo-600 dark:text-indigo-400">
+                    DS
+                  </td>
+                  <td className="p-3 font-mono text-xs">BX, SI, DI</td>
+                  <td className="p-3">
+                    Stores the variables and standard data your program uses.
+                  </td>
+                </tr>
+                <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                  <td className="p-3 font-medium">Stack</td>
+                  <td className="p-3 font-bold text-indigo-600 dark:text-indigo-400">
+                    SS
+                  </td>
+                  <td className="p-3 font-mono text-xs">SP, BP</td>
+                  <td className="p-3">
+                    Used for temporary storage, subroutines, and interrupts.
+                  </td>
+                </tr>
+                <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                  <td className="p-3 font-medium">Extra</td>
+                  <td className="p-3 font-bold text-indigo-600 dark:text-indigo-400">
+                    ES
+                  </td>
+                  <td className="p-3 font-mono text-xs">DI</td>
+                  <td className="p-3">
+                    An additional data segment, heavily used during string
+                    manipulation.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className="bg-slate-100 dark:bg-slate-800 p-5 rounded-lg font-mono text-center mb-6 border border-slate-300 dark:border-slate-600 shadow-inner">
             <h3 className="text-sm uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
               Physical Address Calculation
             </h3>
@@ -1536,6 +1605,60 @@ const contentData = [
               Physical Address = (Segment Register × 10H) + Offset
             </p>
           </div>
+
+          <div className="bg-indigo-50 dark:bg-indigo-900/20 p-5 rounded-lg border border-indigo-100 dark:border-indigo-800 shadow-sm mb-6 text-slate-700 dark:text-slate-300">
+            <h3 className="font-bold text-lg mb-3 text-indigo-700 dark:text-indigo-400">
+              Example Calculation
+            </h3>
+            <p className="text-sm mb-3">
+              Let's calculate where the next instruction is being fetched from
+              if{" "}
+              <strong className="font-mono bg-indigo-100 dark:bg-indigo-900/50 px-1 rounded">
+                CS = 2000H
+              </strong>{" "}
+              and{" "}
+              <strong className="font-mono bg-indigo-100 dark:bg-indigo-900/50 px-1 rounded">
+                IP = 0045H
+              </strong>
+              :
+            </p>
+            <ol className="list-decimal pl-5 space-y-2 text-sm font-mono bg-white dark:bg-slate-900 p-4 rounded border border-slate-200 dark:border-slate-700">
+              <li>
+                Shift Segment Base: 2000H × 10H ={" "}
+                <span className="font-bold text-indigo-600 dark:text-indigo-400">
+                  20000H
+                </span>
+              </li>
+              <li>Add the Offset: 20000H + 0045H</li>
+              <li>
+                Final 20-bit Address ={" "}
+                <span className="font-bold text-indigo-600 dark:text-indigo-400 border-b border-indigo-600 dark:border-indigo-400 pb-0.5">
+                  20045H
+                </span>
+              </li>
+            </ol>
+          </div>
+
+          <h3 className="text-xl font-semibold mb-3 mt-6 text-slate-800 dark:text-slate-200">
+            Advantages of Segmentation
+          </h3>
+          <ul className="list-disc pl-5 space-y-2 text-slate-700 dark:text-slate-300 text-sm">
+            <li>
+              <strong>Relocatability:</strong> Programs can be loaded anywhere
+              in memory simply by changing the Segment Register base address.
+              The internal offset code doesn't need to change.
+            </li>
+            <li>
+              <strong>Separation:</strong> It keeps code, data, and stack areas
+              completely separate, preventing a program from accidentally
+              overwriting its own instructions with data.
+            </li>
+            <li>
+              <strong>Extended Memory:</strong> While a single segment limits a
+              program to 64KB, you can write programs larger than 64KB by
+              modifying segment registers on the fly during execution.
+            </li>
+          </ul>
         </section>
 
         <section>
